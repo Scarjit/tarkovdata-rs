@@ -3,11 +3,13 @@ use std::path::PathBuf;
 
 pub type Quests = Vec<QuestClass>;
 
+use crate::tarkovdata::REPO_DIR;
 use cached::proc_macro::once;
+
 #[once]
-pub(crate) fn from_json(path: &PathBuf) -> Quests {
+pub(crate) fn from_json() -> Quests {
     let jstr =
-        std::fs::read_to_string(path.join("quests.json")).expect("Failed to read quests.json");
+        std::fs::read_to_string(REPO_DIR.join("quests.json")).expect("Failed to read quests.json");
     serde_json::from_str(&jstr).expect("Failed to parse quests.json")
 }
 

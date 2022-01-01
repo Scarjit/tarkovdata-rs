@@ -4,11 +4,13 @@ use std::path::PathBuf;
 
 pub type Levels = HashMap<String, LevelsValue>;
 
+use crate::tarkovdata::REPO_DIR;
 use cached::proc_macro::once;
+
 #[once]
-pub(crate) fn from_json(path: &PathBuf) -> Levels {
+pub(crate) fn from_json() -> Levels {
     let jstr =
-        std::fs::read_to_string(path.join("levels.json")).expect("Failed to read levels.json");
+        std::fs::read_to_string(REPO_DIR.join("levels.json")).expect("Failed to read levels.json");
     serde_json::from_str(&jstr).expect("Failed to parse levels.json")
 }
 

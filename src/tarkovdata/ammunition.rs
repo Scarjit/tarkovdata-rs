@@ -1,12 +1,14 @@
+use crate::tarkovdata::REPO_DIR;
+use cached::proc_macro::once;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::path::PathBuf;
-use cached::proc_macro::once;
+
 pub type Ammuniton = HashMap<String, AmmunitonValue>;
 
 #[once]
-pub(crate) fn from_json(path: &PathBuf) -> Ammuniton {
-    let jstr = std::fs::read_to_string(path.join("ammunition.json"))
+pub(crate) fn from_json() -> Ammuniton {
+    let jstr = std::fs::read_to_string(REPO_DIR.join("ammunition.json"))
         .expect("Failed to read ammunition.json");
     serde_json::from_str(&jstr).expect("Failed to parse ammunition.json")
 }

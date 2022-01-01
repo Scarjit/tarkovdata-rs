@@ -4,10 +4,12 @@ use std::path::PathBuf;
 
 pub type ItemPresets = HashMap<String, ItemPresetsValue>;
 
+use crate::tarkovdata::REPO_DIR;
 use cached::proc_macro::once;
+
 #[once]
-pub(crate) fn from_json(path: &PathBuf) -> ItemPresets {
-    let jstr = std::fs::read_to_string(path.join("item_presets.json"))
+pub(crate) fn from_json() -> ItemPresets {
+    let jstr = std::fs::read_to_string(REPO_DIR.join("item_presets.json"))
         .expect("Failed to read item_presets.json");
     serde_json::from_str(&jstr).expect("Failed to parse item_presets.json")
 }

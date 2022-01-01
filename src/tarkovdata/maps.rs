@@ -3,10 +3,13 @@ use std::collections::HashMap;
 use std::path::PathBuf;
 
 pub type Maps = HashMap<String, Map>;
+use crate::tarkovdata::REPO_DIR;
 use cached::proc_macro::once;
+
 #[once]
-pub(crate) fn from_json(path: &PathBuf) -> Maps {
-    let jstr = std::fs::read_to_string(path.join("maps.json")).expect("Failed to read maps.json");
+pub(crate) fn from_json() -> Maps {
+    let jstr =
+        std::fs::read_to_string(REPO_DIR.join("maps.json")).expect("Failed to read maps.json");
     serde_json::from_str(&jstr).expect("Failed to parse maps.json")
 }
 

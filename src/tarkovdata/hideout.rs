@@ -1,11 +1,14 @@
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize, Deserializer, Serialize};
 use std::path::PathBuf;
 
+use crate::tarkovdata::traders::Trader;
+use crate::tarkovdata::{traders, REPO_DIR};
 use cached::proc_macro::once;
+
 #[once]
-pub(crate) fn from_json(path: &PathBuf) -> Hideout {
-    let jstr =
-        std::fs::read_to_string(path.join("hideout.json")).expect("Failed to read hideout.json");
+pub(crate) fn from_json() -> Hideout {
+    let jstr = std::fs::read_to_string(REPO_DIR.join("hideout.json"))
+        .expect("Failed to read hideout.json");
     serde_json::from_str(&jstr).expect("Failed to parse hideout.json")
 }
 
@@ -52,8 +55,25 @@ pub struct Locales {
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(untagged)]
 pub enum Name {
-    Integer(i64),
     String(String),
+    #[serde(deserialize_with = "trader_from_number")]
+    Trader(Trader),
+}
+
+fn trader_from_number<'de, D>(deserializer: D) -> Result<Trader, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    let n: i64 = Deserialize::deserialize(deserializer)?;
+
+    let traders = traders::from_json();
+    Ok(traders
+        .iter()
+        .filter(|t| t.1.id == n)
+        .next()
+        .unwrap()
+        .1
+        .clone())
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
