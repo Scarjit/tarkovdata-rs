@@ -1,15 +1,17 @@
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::path::PathBuf;
-
+use cached::proc_macro::once;
 pub type Ammuniton = HashMap<String, AmmunitonValue>;
 
-pub fn from_json(path: &PathBuf) -> Ammuniton{
-    let jstr = std::fs::read_to_string(path.join("ammunition.json")).expect("Failed to read ammunition.json");
+#[once]
+pub(crate) fn from_json(path: &PathBuf) -> Ammuniton {
+    let jstr = std::fs::read_to_string(path.join("ammunition.json"))
+        .expect("Failed to read ammunition.json");
     serde_json::from_str(&jstr).expect("Failed to parse ammunition.json")
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct AmmunitonValue {
     pub(crate) id: String,
     pub(crate) name: String,
@@ -29,7 +31,7 @@ pub struct AmmunitonValue {
     pub(crate) ballistics: Ballistics,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Ballistics {
     pub(crate) damage: i64,
     #[serde(rename = "armorDamage")]
@@ -48,7 +50,7 @@ pub struct Ballistics {
     pub(crate) initial_speed: i64,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub enum AmmoType {
     #[serde(rename = "buckshot")]
     Buckshot,
@@ -58,7 +60,7 @@ pub enum AmmoType {
     Grenade,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub enum TracerColor {
     #[serde(rename = "green")]
     Green,

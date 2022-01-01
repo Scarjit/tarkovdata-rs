@@ -1,14 +1,17 @@
+use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
-use serde::{Serialize, Deserialize};
 
 pub type Quests = Vec<QuestClass>;
 
-pub fn from_json(path: &PathBuf) -> Quests{
-    let jstr = std::fs::read_to_string(path.join("quests.json")).expect("Failed to read quests.json");
+use cached::proc_macro::once;
+#[once]
+pub(crate) fn from_json(path: &PathBuf) -> Quests {
+    let jstr =
+        std::fs::read_to_string(path.join("quests.json")).expect("Failed to read quests.json");
     serde_json::from_str(&jstr).expect("Failed to parse quests.json")
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct QuestClass {
     pub(crate) id: i64,
     pub(crate) require: Require,
@@ -29,14 +32,14 @@ pub struct QuestClass {
     pub(crate) nokappa: Option<bool>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Locales {
     pub(crate) en: String,
     pub(crate) ru: Option<String>,
     pub(crate) cs: Option<String>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Objective {
     #[serde(rename = "type")]
     pub(crate) objective_type: ObjectiveType,
@@ -51,7 +54,7 @@ pub struct Objective {
     pub(crate) with: Option<Vec<WithElement>>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Gps {
     #[serde(rename = "leftPercent")]
     pub(crate) left_percent: f64,
@@ -60,7 +63,7 @@ pub struct Gps {
     pub(crate) floor: Floor,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct WithClass {
     #[serde(rename = "type")]
     pub(crate) with_type: WithType,
@@ -69,31 +72,31 @@ pub struct WithClass {
     pub(crate) id: Option<IdUnion>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct IdElement {
     pub(crate) id: String,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Reputation {
     pub(crate) trader: i64,
     pub(crate) rep: f64,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Require {
     pub(crate) level: Option<i64>,
     pub(crate) quests: Vec<QuestUnion>,
     pub(crate) loyalty: Option<Vec<Loyalty>>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Loyalty {
     pub(crate) trader: i64,
     pub(crate) stage: i64,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(untagged)]
 pub enum Target {
     Integer(i64),
@@ -101,42 +104,42 @@ pub enum Target {
     StringArray(Vec<String>),
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(untagged)]
 pub enum WithElement {
     String(String),
     WithClass(WithClass),
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(untagged)]
 pub enum IdUnion {
     IdElementArray(Vec<IdElement>),
     String(String),
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(untagged)]
 pub enum Value {
     Integer(i64),
     String(String),
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(untagged)]
 pub enum QuestUnion {
     Integer(i64),
     IntegerArray(Vec<i64>),
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(untagged)]
 pub enum Unlock {
     Integer(i64),
     String(String),
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub enum Floor {
     Basement,
     Bunkers,
@@ -150,7 +153,7 @@ pub enum Floor {
     SecondFloor,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub enum ObjectiveType {
     #[serde(rename = "build")]
     Build,
@@ -178,7 +181,7 @@ pub enum ObjectiveType {
     Warning,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub enum Tool {
     #[serde(rename = "5991b51486f77447b112d44f")]
     The5991B51486F77447B112D44F,
@@ -188,7 +191,7 @@ pub enum Tool {
     The5B4391A586F7745321235Ab2,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub enum Name {
     #[serde(rename = "durability")]
     Durability,
@@ -208,7 +211,7 @@ pub enum Name {
     Weight,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub enum WithType {
     #[serde(rename = "attachment")]
     Attachment,

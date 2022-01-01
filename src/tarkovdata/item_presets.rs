@@ -1,16 +1,18 @@
-
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::path::PathBuf;
 
 pub type ItemPresets = HashMap<String, ItemPresetsValue>;
 
-pub fn from_json(path: &PathBuf) -> ItemPresets{
-    let jstr = std::fs::read_to_string(path.join("item_presets.json")).expect("Failed to read item_presets.json");
+use cached::proc_macro::once;
+#[once]
+pub(crate) fn from_json(path: &PathBuf) -> ItemPresets {
+    let jstr = std::fs::read_to_string(path.join("item_presets.json"))
+        .expect("Failed to read item_presets.json");
     serde_json::from_str(&jstr).expect("Failed to parse item_presets.json")
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct ItemPresetsValue {
     pub(crate) id: String,
     pub(crate) name: String,
@@ -23,7 +25,7 @@ pub struct ItemPresetsValue {
     pub(crate) parts: Vec<Part>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Part {
     pub(crate) id: String,
     pub(crate) quantity: i64,
