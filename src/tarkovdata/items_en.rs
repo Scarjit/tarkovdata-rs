@@ -14,10 +14,10 @@ pub fn from_json(path: &PathBuf) -> ItemsEn{
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ItemsEnValue {
-    pub(crate) id: Option<String>,
+    //TODO: Remove when https://github.com/TarkovTracker/tarkovdata/pull/198 is merged
+    #[serde(alias = "id:")]
+    pub(crate) id: String,
     pub(crate) name: String,
     #[serde(rename = "shortName")]
     pub(crate) short_name: String,
-    #[serde(rename = "id:")]
-    pub(crate) items_en_id: Option<String>,
 }
