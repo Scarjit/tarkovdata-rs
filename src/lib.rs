@@ -4,11 +4,11 @@ pub(crate) mod tarkovdata;
 #[cfg(test)]
 mod tests {
     use crate::git::GRep;
-    use crate::tarkovdata::hideout::{Name, Type};
+    
     use crate::tarkovdata::{
         ammunition, hideout, item_presets, items_en, levels, maps, quests, traders,
     };
-    use std::time::Instant;
+    
 
     #[test]
     fn test_download() {
@@ -27,7 +27,7 @@ mod tests {
         let mut tarkovdata =
             GRep::init("https://github.com/TarkovTracker/tarkovdata.git", "master");
         tarkovdata.download_or_update();
-        let repo_dir = tarkovdata.get_repo_dir();
+        let _repo_dir = tarkovdata.get_repo_dir();
 
         let _ammo = ammunition::from_json();
         let _hideout = hideout::from_json();

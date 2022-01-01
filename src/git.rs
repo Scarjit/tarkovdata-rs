@@ -2,8 +2,8 @@ use directories::ProjectDirs;
 use git2::Repository;
 use std::fs::create_dir_all;
 use std::path::PathBuf;
-use std::thread;
-use std::time::Duration;
+
+
 use xxhash_rust::xxh3::xxh3_64;
 
 pub struct GRep {
