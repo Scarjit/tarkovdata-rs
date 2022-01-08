@@ -5,6 +5,7 @@ use crate::tarkovdata::traders::Trader;
 use crate::tarkovdata::{traders, REPO_DIR};
 use cached::proc_macro::once;
 
+
 #[once]
 pub(crate) fn from_json() -> Hideout {
     let jstr = std::fs::read_to_string(REPO_DIR.join("hideout.json"))

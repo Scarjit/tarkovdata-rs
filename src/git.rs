@@ -46,37 +46,9 @@ impl GRep {
     pub fn download_or_update(&mut self) {
         match &self.repo {
             None => self.repo = Some(self.download()),
-            Some(r) => {
-                r.find_remote("origin")
-                    .expect("Failed to get remote/origin")
-                    .fetch(&["master"], None, None)
-                    .expect("Failed to fetch");
 
-                let fetch_head = r
-                    .find_reference("FETCH_HEAD")
-                    .expect("Failed to find FETCH_HEAD reference");
-                let fetch_commit = r
-                    .reference_to_annotated_commit(&fetch_head)
-                    .expect("Failed to get annotated commits from ref");
-                let analysis = r
-                    .merge_analysis(&[&fetch_commit])
-                    .expect("Failed to execute merge analysis");
-                if analysis.0.is_up_to_date() {
-                    return;
-                } else if analysis.0.is_fast_forward() {
-                    let refname = format!("refs/heads/{}", self.branch);
-                    let mut reference = r
-                        .find_reference(&refname)
-                        .expect("Failed to find reference");
-                    reference
-                        .set_target(fetch_commit.id(), "Fast-Forward")
-                        .expect("Failed to set target");
-                    r.set_head(&refname).expect("Failed to set head");
-                    r.checkout_head(Some(git2::build::CheckoutBuilder::default().force()))
-                        .expect("Failed to checkout head");
-                } else {
-                    panic!("Can't fast-forward");
-                }
+            Some(_) => {
+                //println!("Already downloaded");
             }
         }
     }

@@ -59,9 +59,9 @@ pub struct Objective {
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Gps {
     #[serde(rename = "leftPercent")]
-    pub(crate) left_percent: f64,
+    pub(crate) left_percent: Option<f64>,
     #[serde(rename = "topPercent")]
-    pub(crate) top_percent: f64,
+    pub(crate) top_percent: Option<f64>,
     pub(crate) floor: Floor,
 }
 

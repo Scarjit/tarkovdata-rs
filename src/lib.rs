@@ -8,18 +8,19 @@ mod tests {
     use crate::tarkovdata::{
         ammunition, hideout, item_presets, items_en, levels, maps, quests, traders,
     };
+    use crate::tarkovdata::hideout::{Name, Type};
     
+
 
     #[test]
     fn test_download() {
         let hideout = hideout::from_json();
-        let afu = hideout
+        let _ = hideout
             .modules
             .iter()
             .filter(|s| s.module == "Air Filtering Unit")
             .next()
             .unwrap();
-        println!("{:?}", afu);
     }
 
     #[test]
@@ -39,13 +40,11 @@ mod tests {
         let _traders = traders::from_json();
     }
 
-    /*
+
     #[test]
     fn test_chain() {
-        let mut tarkovdata =
+        let _tarkovdata =
             GRep::init("https://github.com/TarkovTracker/tarkovdata.git", "master");
-        tarkovdata.download_or_update();
-        let repo_dir = tarkovdata.get_repo_dir();
 
         let test_hideout_module = "Intelligence center";
         let level = 2;
@@ -60,76 +59,63 @@ mod tests {
             .next()
             .expect("Failed to find module");
 
-        let traders = traders::from_json();
+        let _traders = traders::from_json();
         let items = items_en::from_json();
 
         println!("[Requirements]");
 
-        for requirements in &hideout_module.require {
-            match requirements.require_type {
-                Type::Item => match &requirements.name {
-                    Name::Integer(v) => {
-                        panic!("Item has integer type name ! {}", v)
+        for requirement in &hideout_module.require {
+            match requirement.require_type {
+                Type::Item => {
+                    match &requirement.name {
+                        Name::String(s) => {
+                            match items.iter().filter(|p| &p.1.id == s).next(){
+                                None => {
+                                    panic!("Item not found ! {}", requirement.id)
+                                }
+                                Some(v) => {
+                                    println!("\t{{Item}} {}x{}", requirement.quantity,v.1.name);
+                                }
+                            }
+                        }
+                        Name::Trader(_) => {
+                            panic!("Trader as item")
+                        }
                     }
-                    Name::String(v) => {
-                        let item = items
-                            .iter()
-                            .filter(|i| &i.1.id == v)
-                            .next()
-                            .expect("Failed to find item by id");
-                        println!(
-                            "\t {{Item}} {} @ Level {}",
-                            item.1.name, requirements.quantity
-                        )
+                }
+                Type::Module => {
+                    match &requirement.name {
+                        Name::String(s) => {
+                            println!("\t{{Module}} {} @ Level {}", s,requirement.quantity);
+                        }
+                        Name::Trader(_) => {
+                            panic!("Trader as module")
+                        }
                     }
-                },
-                Type::Module => match &requirements.name {
-                    Name::Integer(v) => {
-                        panic!("Module has integer type name ! {}", v)
+                }
+                Type::Skill => {
+                    match &requirement.name {
+                        Name::String(s) => {
+                            println!("\t{{Skill}} {} @ Level {}", s,requirement.quantity);
+                        }
+                        Name::Trader(_) => {
+                            panic!("Trader as skill")
+                        }
                     }
-                    Name::String(v) => {
-                        println!("\t {{Module}} {} @ Level {}", v, requirements.quantity)
-                    }
-                },
-                Type::Skill => match &requirements.name {
-                    Name::Integer(v) => {
-                        panic!("Skill has integer type name ! {}", v)
-                    }
-                    Name::String(v) => {
-                        println!("\t {{Skill}} {} @ Level {}", v, requirements.quantity)
-                    }
-                },
-                Type::Trader => match &requirements.name {
-                    Name::Integer(v) => {
-                        let trader = traders
-                            .iter()
-                            .filter(|t| t.1.id == *v)
-                            .next()
-                            .expect("Failed to get trader by id");
 
-                        println!("\t {{Trader}} {}", trader.1.name);
-
-                        let trader_req = &trader.1.loyalty[requirements.quantity as usize];
-                        println!("\t\t\tLevel:\t{}", trader_req.level);
-                        println!(
-                            "\t\t\tRequired player level:\t{}",
-                            trader_req.required_level
-                        );
-                        println!(
-                            "\t\t\tRequired reputation:\t{}",
-                            trader_req.required_reputation
-                        );
-                        println!(
-                            "\t\t\tRequired sales [{}]:\t{}",
-                            trader.1.sales_currency, trader_req.required_sales
-                        );
+                }
+                Type::Trader => {
+                    match &requirement.name {
+                        Name::String(_) => {
+                            panic!("String as trader")
+                        }
+                        Name::Trader(t) => {
+                            println!("\t{{Trader}} {} @ Level {}", t.name, requirement.quantity);
+                        }
                     }
-                    Name::String(v) => {
-                        panic!("Trader has string type name ! {}", v)
-                    }
-                },
+                }
             }
         }
     }
-    */
+
 }
